@@ -35,7 +35,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             } else if (message.Text.ToLower().Contains("hire")
                        || message.Text.ToLower().Contains("post")
                        || message.Text.ToLower().Contains("job")) {
-                String linkedInResponse = await CallLinkedInAPI(context);
+                String response = await CallMicroSoftAPI(context);
             } else if (message.Text.ToLower().Contains("applicants")) {
                 // user wants to see applicants of the job
             }
@@ -97,8 +97,11 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             {
                 using (HttpClient httpClient = new HttpClient())
                 {
-                    String target = "https://www.linkedin.com/mjobs/api/jobPosting/getPrefillJobId?companyName=LinkedIn&title=Software%20Engineer";
-                    HttpResponseMessage httpResponse = await httpClient.GetAsync(target);
+                    String target = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/entities";
+                    String entities = "{\"documents\":[{\"language\":\"en\",\"id\":\"1\",\"text\":\"I want to hire a software engineer for my company.\"}]}";
+                    httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
+                    httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "bee7e2d91eb342dbae5860adf08082ec");
+                    HttpResponseMessage httpResponse = await httpClient.PostAsJsonAsync(target, entities);
                     if (httpResponse.IsSuccessStatusCode)
                     {
                         String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
@@ -117,7 +120,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             {
                 await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
                 await context.SayAsync("Please try again");
-                throw new Exception("Something is wrong with calling LinkedIn API");
+                throw new Exception("Something is wrong with calling MicroSoft Text Analytics API");
             }
         }
 
