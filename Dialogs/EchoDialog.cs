@@ -10,10 +10,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
     [Serializable]
     public class EchoDialog : IDialog<object>
     {
-        private UserInfo userInfo;
-
-        public EchoDialog(UserInfo user) {
-            this.userInfo = user;
+        public EchoDialog() {
         }
 
         public async Task StartAsync(IDialogContext context)
@@ -64,6 +61,37 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         }
 
         private async Task<String> CallLinkedInAPI(IDialogContext context) {
+            // showed interest in hiring, try to understand the user input by making calls to external API
+            try
+            {
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    String target = "https://www.linkedin.com/mjobs/api/jobPosting/getPrefillJobId?companyName=LinkedIn&title=Software%20Engineer";
+                    HttpResponseMessage httpResponse = await httpClient.GetAsync(target);
+                    if (httpResponse.IsSuccessStatusCode)
+                    {
+                        String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
+                        await context.PostAsync($"Response received is: {jsonResponse}");
+                        return jsonResponse;
+                    }
+                    else
+                    {
+                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode}");
+                        await context.PostAsync($"Response received is: {httpResponse.ReasonPhrase}");
+                        throw new Exception("Something is wrong with calling LinkedIn API");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
+                await context.SayAsync("Please try again");
+                throw new Exception("Something is wrong with calling LinkedIn API");
+            }
+        }
+
+        private async Task<String> CallMicroSoftAPI(IDialogContext context)
+        {
             // showed interest in hiring, try to understand the user input by making calls to external API
             try
             {
