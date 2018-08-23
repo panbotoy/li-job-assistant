@@ -60,46 +60,5 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
 
             return null;
         }
-
-
-        private UserInfo InferUserInfo(Activity activity)
-        {
-            if (activity.Entities != null)
-            {
-                Entity userInfo = null;
-                foreach (var entity in activity.Entities)
-                {
-                    if (entity.Type.Equals("UserInfo"))
-                    {
-                        userInfo = entity;
-                    }
-                    break;
-                }
-                if (userInfo != null)
-                {
-                    var email = userInfo.Properties.Value<string>("UserEmail");
-                    var name = userInfo.Properties.Value<string>("UserName");
-
-                    var currentLocation = userInfo.Properties["CurrentLocation"];
-
-                    if (currentLocation != null)
-                    {
-                        var hub = currentLocation["Hub"];
-
-                        //Access the latitude and longitude values of the user's location.
-                        var lat = hub.Value<double>("Latitude");
-                        var lon = hub.Value<double>("Longitude");
-
-                        //Do something with the user's location information.
-                    }
-                    return new UserInfo().SetName(name).SetEmail(email).SetLocation("");
-                }
-                return null;
-            }
-            else
-            {
-                return null;
-            }
-        }
     }
 }

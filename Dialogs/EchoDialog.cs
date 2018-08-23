@@ -15,7 +15,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
 
         public async Task StartAsync(IDialogContext context)
         {
-            await context.SayAsync("How can I help you?");
+            await context.PostAsync("How can I help you?");
             context.Wait(MessageReceivedAsync);
         }
 
@@ -41,7 +41,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             }
             else
             {
-                await context.PostAsync($" You just just haha said {message.Text}");
+                await context.PostAsync($" You just haha said {message.Text}");
                 context.Wait(MessageReceivedAsync);
             }
         }
@@ -85,7 +85,6 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             catch (Exception e)
             {
                 await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
-                await context.SayAsync("Please try again");
                 throw new Exception("Something is wrong with calling LinkedIn API");
             }
         }
@@ -119,7 +118,6 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             catch (Exception e)
             {
                 await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
-                await context.SayAsync("Please try again");
                 throw new Exception("Something is wrong with calling MicroSoft Text Analytics API");
             }
         }
