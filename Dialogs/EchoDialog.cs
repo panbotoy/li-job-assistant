@@ -98,9 +98,9 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 {
                     String target = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/entities";
                     String entities = "{\"documents\":[{\"language\":\"en\",\"id\":\"1\",\"text\":\"I want to hire a software engineer for my company.\"}]}";
-                    httpClient.DefaultRequestHeaders.Add("Content-Type", "application/json");
                     httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "bee7e2d91eb342dbae5860adf08082ec");
-                    HttpResponseMessage httpResponse = await httpClient.PostAsJsonAsync(target, entities);
+                    var stringContent = new StringContent(entities, System.Text.Encoding.UTF8, "application/json");
+                    HttpResponseMessage httpResponse = await httpClient.PostAsJsonAsync(target, stringContent);
                     if (httpResponse.IsSuccessStatusCode)
                     {
                         String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
@@ -109,8 +109,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     }
                     else
                     {
-                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode}");
-                        await context.PostAsync($"Response received is: {httpResponse.ReasonPhrase}");
+                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode} {httpResponse.ToString()}");
                         throw new Exception("Something is wrong with calling LinkedIn API");
                     }
                 }
