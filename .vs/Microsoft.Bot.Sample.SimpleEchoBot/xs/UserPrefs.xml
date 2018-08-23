@@ -1,8 +1,27 @@
 ﻿<Properties StartupConfiguration="{9C7E3A46-B60F-4052-9A21-DC8D1A942216}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Dialogs/EchoDialog.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Dialogs/UserInfo.cs">
     <Files>
-      <File FileName="Dialogs/EchoDialog.cs" Line="37" Column="52" />
+      <File FileName="Dialogs/EchoDialog.cs" Line="49" Column="10" />
+      <File FileName="Controllers/MessagesController.cs" Line="64" Column="20" />
+      <File FileName="Controllers/UserInfo.cs" Line="6" Column="2" />
+      <File FileName="Dialogs/UserInfo.cs" Line="4" Column="5" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Microsoft.Bot.Sample.SimpleEchoBot" expanded="True">
+            <Node name="Microsoft.Bot.Sample.SimpleEchoBot" expanded="True">
+              <Node name="Controllers" expanded="True" />
+              <Node name="Dialogs" expanded="True">
+                <Node name="UserInfo.cs" selected="True" />
+              </Node>
+              <Node name="Properties" expanded="True" />
+              <Node name="Global.asax" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

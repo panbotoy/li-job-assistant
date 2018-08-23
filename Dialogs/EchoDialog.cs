@@ -5,21 +5,26 @@ using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
 using System.Net.Http;
 
-
 namespace Microsoft.Bot.Sample.SimpleEchoBot
 {
     [Serializable]
     public class EchoDialog : IDialog<object>
     {
-        protected int count = 1;
+        private UserInfo userInfo;
+
+        public EchoDialog(UserInfo user) {
+            this.userInfo = user;
+        }
 
         public async Task StartAsync(IDialogContext context)
         {
+            await context.SayAsync("How can I help you?");
             context.Wait(MessageReceivedAsync);
         }
 
         public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
+            //UserInfo user = InferUserInfo(activity);
             var message = await argument;
 
             if (message.Text == "reset")
@@ -30,10 +35,16 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     "Are you sure you want to reset the count?",
                     "Didn't get that!",
                     promptStyle: PromptStyle.Auto);
+            } else if (message.Text.ToLower().Contains("hire")
+                       || message.Text.ToLower().Contains("post")
+                       || message.Text.ToLower().Contains("job")) {
+                String linkedInResponse = await CallLinkedInAPI(context);
+            } else if (message.Text.ToLower().Contains("applicants")) {
+                // user wants to see applicants of the job
             }
             else
             {
-                await context.PostAsync($"{this.count++}: You just just haha said {message.Text}");
+                await context.PostAsync($" You just just haha said {message.Text}");
                 context.Wait(MessageReceivedAsync);
             }
         }
@@ -43,7 +54,6 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             var confirm = await argument;
             if (confirm)
             {
-                this.count = 1;
                 await context.PostAsync("Reset count.");
             }
             else
@@ -51,6 +61,36 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 await context.PostAsync("Did not reset count.");
             }
             context.Wait(MessageReceivedAsync);
+        }
+
+        private async Task<String> CallLinkedInAPI(IDialogContext context) {
+            // showed interest in hiring, try to understand the user input by making calls to external API
+            try
+            {
+                using (HttpClient httpClient = new HttpClient())
+                {
+                    String target = "https://www.linkedin.com/mjobs/api/jobPosting/getPrefillJobId?companyName=LinkedIn&title=Software%20Engineer";
+                    HttpResponseMessage httpResponse = await httpClient.GetAsync(target);
+                    if (httpResponse.IsSuccessStatusCode)
+                    {
+                        String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
+                        await context.PostAsync($"Response received is: {jsonResponse}");
+                        return jsonResponse;
+                    }
+                    else
+                    {
+                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode}");
+                        await context.PostAsync($"Response received is: {httpResponse.ReasonPhrase}");
+                        throw new Exception("Something is wrong with calling LinkedIn API");
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
+                await context.SayAsync("Please try again");
+                throw new Exception("Something is wrong with calling LinkedIn API");
+            }
         }
 
     }
