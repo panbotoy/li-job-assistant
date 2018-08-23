@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Builder.Dialogs;
 using System.Net.Http;
+using System.Web;
+using System.Text;
+using System.Net.Http.Headers;
 
 namespace Microsoft.Bot.Sample.SimpleEchoBot
 {
@@ -23,7 +26,9 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         {
             //UserInfo user = InferUserInfo(activity);
             var message = await argument;
-
+            if (string.IsNullOrEmpty(message.Text)) {
+                await context.PostAsync($"empty input");
+            }
             if (message.Text == "reset")
             {
                 PromptDialog.Confirm(
@@ -99,8 +104,20 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     String target = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/entities";
                     String entities = "{\"documents\":[{\"language\":\"en\",\"id\":\"1\",\"text\":\"I want to hire a software engineer for my company.\"}]}";
                     httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "bee7e2d91eb342dbae5860adf08082ec");
-                    var stringContent = new StringContent(entities, System.Text.Encoding.UTF8, "application/json");
-                    HttpResponseMessage httpResponse = await httpClient.PostAsJsonAsync(target, stringContent);
+
+                    var queryString = HttpUtility.ParseQueryString(string.Empty);
+                    // Request headers
+                    var uri = "https://westus.api.cognitive.microsoft.com/text/analytics/v2.0/keyPhrases?" + queryString;
+                    HttpResponseMessage httpResponse;
+                    byte[] byteData = Encoding.UTF8.GetBytes(entities);
+                    using (var content = new ByteArrayContent(byteData))
+                    {
+                        content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                        httpResponse = await httpClient.PostAsync(uri, content);
+                    }
+
+                    //var stringContent = new StringContent(entities, System.Text.Encoding.UTF8, "application/json");
+                    //HttpResponseMessage httpResponse = await httpClient.PostAsJsonAsync(target, stringContent);
                     if (httpResponse.IsSuccessStatusCode)
                     {
                         String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
@@ -109,7 +126,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     }
                     else
                     {
-                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode} {httpResponse.ToString()}");
+                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode} {httpResponse}");
                         throw new Exception("Something is wrong with calling LinkedIn API");
                     }
                 }
