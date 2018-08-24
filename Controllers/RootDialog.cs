@@ -22,7 +22,6 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 var message = await result; // We've got a message!
                 if (string.IsNullOrEmpty(message.Text))
                 {
-                    await context.PostAsync($"empty input");
                     context.Wait(MessageReceivedAsync);
                 }
                 if (message.Text.Contains("applicants")
