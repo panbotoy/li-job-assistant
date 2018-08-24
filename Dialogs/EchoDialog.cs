@@ -27,9 +27,6 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
 
         public async Task MessageReceivedAsync(IDialogContext context, string message)
         {
-            // todo(bopan): debug the NPE issue
-            //UserInfo user = InferUserInfo(activity);
-            //var message = await argument;
             if (string.IsNullOrEmpty(message)) {
                 await context.PostAsync($"empty input");
             }

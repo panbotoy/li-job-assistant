@@ -13,7 +13,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         {
             // Root dialog initiates and waits for the next message from the user. 
             // When a message arrives, call MessageReceivedAsync.
-            await context.PostAsync("How can I help you?");
+            //await context.PostAsync("How can I help you?");
             context.Wait(this.MessageReceivedAsync);
         }
         public virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
@@ -25,8 +25,9 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     await context.PostAsync($"empty input");
                     context.Wait(MessageReceivedAsync);
                 }
-                if (message.Text.Contains("view applicants")
+                if (message.Text.Contains("applicants")
                    || message.Text.Contains("applicant")
+                    || message.Text.Contains("applications")
                    )
                 {
                     context.Call(new ApplicantsDialog(), this.ResumeAfterNewOrderDialog);

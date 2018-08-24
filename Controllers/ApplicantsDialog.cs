@@ -47,13 +47,13 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     highLightMessage = $"No more applicants to view. Come back later!";
                     finishedViewing = true;
                 }
-                IMessageActivity heroImageResponse = await DisplayHeroCard(context, this.applicants.applicants[applicationIndex], highLightMessage);
+                IMessageActivity heroImageResponse = await DisplayHeroCard(context, this.applicants.applicants[applicationIndex]);
                 // Then, call ResumeAfterNewOrderDialog.
                 // need to 
                 // prompt for good/bad
                 // choose top of the list, and display to the user, prompt for input
                 //new PromptDialog()
-                //heroImageResponse.Text = highLightMessage;
+                heroImageResponse.Text = highLightMessage;
                 await context.PostAsync(heroImageResponse);
                 this.applicationIndex++;
                 if (!finishedViewing) {
@@ -81,10 +81,10 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         //    await context.PostAsync(replyMessage);
         //}
 
-        public async Task<IMessageActivity> DisplayHeroCard(IDialogContext context, Applicant applicant, string text)
+        public async Task<IMessageActivity> DisplayHeroCard(IDialogContext context, Applicant applicant)
         {
             List<Attachment> attachments = new List<Attachment>();
-            Attachment attachment = GetProfileHeroCard(applicant, text);
+            Attachment attachment = GetProfileHeroCard(applicant);
             attachments.Add(attachment);
             var replyMessage = context.MakeMessage();
             replyMessage.Attachments = attachments;
@@ -92,9 +92,8 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             return replyMessage;
         }
 
-        private static Attachment GetProfileHeroCard(Applicant applicant, string text)
+        private static Attachment GetProfileHeroCard(Applicant applicant)
         {
-            string[] sentenses = text.Split('.');
             var heroCard = new HeroCard
             {
                 // title of the card  
@@ -109,9 +108,9 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 Images = new List<CardImage> { new CardImage(applicant.memberImageUrl) },
                 // list of buttons   
                 //change this to a string
-                Buttons = new List<CardAction> { new CardAction(ActionTypes.MessageBack, sentenses[0], value: "http://www.devenvexe.com"), 
-                    new CardAction(ActionTypes.MessageBack, sentenses[1], value: "http://www.devenvexe.com") }
-                //Buttons = new List<CardAction> {}
+                //Buttons = new List<CardAction> { new CardAction(ActionTypes.MessageBack, sentenses[0], value: "http://www.devenvexe.com"), 
+                    //new CardAction(ActionTypes.MessageBack, sentenses[1], value: "http://www.devenvexe.com") }
+                Buttons = new List<CardAction> {}
             };
 
             return heroCard.ToAttachment();

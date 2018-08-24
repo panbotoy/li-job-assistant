@@ -20,9 +20,8 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
             // check if activity is of type message
-            if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
+            if (activity != null && activity.Text != null && activity.GetActivityType() == ActivityTypes.Message)
             {
-
                 await Conversation.SendAsync(activity, () => new RootDialog());
             }
             else
