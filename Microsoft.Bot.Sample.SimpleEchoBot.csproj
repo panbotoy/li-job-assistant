@@ -183,6 +183,8 @@
     <Compile Include="Dialogs\PostJobBody.cs" />
     <Compile Include="Dialogs\ApplicantBody.cs" />
     <Compile Include="Controllers\ApplicantsDialog.cs" />
+    <Compile Include="Controllers\RootDialog.cs" />
+    <Compile Include="Controllers\ChatDialog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

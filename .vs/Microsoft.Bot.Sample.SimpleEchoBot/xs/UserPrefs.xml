@@ -1,19 +1,22 @@
 ﻿<Properties StartupConfiguration="{9C7E3A46-B60F-4052-9A21-DC8D1A942216}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Controllers/ApplicantsDialog.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Controllers/RootDialog.cs">
     <Files>
-      <File FileName="Dialogs/EchoDialog.cs" Line="16" Column="18" />
-      <File FileName="Controllers/MessagesController.cs" Line="26" Column="82" />
+      <File FileName="Dialogs/EchoDialog.cs" Line="25" Column="14" />
+      <File FileName="Controllers/MessagesController.cs" Line="27" Column="1" />
       <File FileName="Controllers/UserInfo.cs" Line="6" Column="2" />
       <File FileName="Dialogs/DocumentInput.cs" Line="25" Column="32" />
-      <File FileName="Dialogs/TextAnalysisKeyPhrases.cs" Line="14" Column="1" />
-      <File FileName="Dialogs/PostJobBody.cs" Line="17" Column="18" />
-      <File FileName="Dialogs/ApplicantBody.cs" Line="8" Column="6" />
-      <File FileName="Controllers/ApplicantsDialog.cs" Line="7" Column="9" />
+      <File FileName="Controllers/ApplicantsDialog.cs" Line="35" Column="14" />
+      <File FileName="Controllers/RootDialog.cs" Line="42" Column="38" />
+      <File FileName="Controllers/ChatDialog.cs" Line="9" Column="20" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/bopan/workspace/li-job-assistant/Controllers/ChatDialog.cs" relfile="Controllers/ChatDialog.cs" line="19" column="1" />
+      <Breakpoint file="/Users/bopan/workspace/li-job-assistant/Controllers/ChatDialog.cs" relfile="Controllers/ChatDialog.cs" line="39" column="1" />
+      <Breakpoint file="/Users/bopan/workspace/li-job-assistant/Controllers/RootDialog.cs" relfile="Controllers/RootDialog.cs" line="42" column="1" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MultiItemStartupConfigurations />

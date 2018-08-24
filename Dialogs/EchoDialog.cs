@@ -15,83 +15,33 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
     [Serializable]
     public class EchoDialog : IDialog<object>
     {
-        public EchoDialog() {
-
+        private string rawInput;
+        public EchoDialog(string rawInput) {
+            this.rawInput = rawInput;
         }
 
         public async Task StartAsync(IDialogContext context)
         {
-            await context.PostAsync("How can I help you?");
-            context.Wait(MessageReceivedAsync);
+            await MessageReceivedAsync(context, this.rawInput);
         }
 
-        public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
+        public async Task MessageReceivedAsync(IDialogContext context, string message)
         {
             // todo(bopan): debug the NPE issue
             //UserInfo user = InferUserInfo(activity);
-            var message = await argument;
-            if (string.IsNullOrEmpty(message.Text)) {
+            //var message = await argument;
+            if (string.IsNullOrEmpty(message)) {
                 await context.PostAsync($"empty input");
             }
-            if (message.Text == "reset")
-            {
-                PromptDialog.Confirm(
-                    context,
-                    AfterResetAsync,
-                    "Are you sure you want to reset the count?",
-                    "Didn't get that!",
-                    promptStyle: PromptStyle.Auto);
-            } 
             // job posting flow
-            else if (message.Text.ToLower().Contains("hire")
-                     || message.Text.ToLower().Contains("post")
-                     || message.Text.ToLower().Contains("role")
-                     || message.Text.ToLower().Contains("position")
-                     || message.Text.ToLower().Contains("job")) {
-                String rawIntention = message.Text;
-                // call MS keyphase TA api, to parse out the keywords
-                PostJobBody postJobBody = await CallMicroSoftAPI(context, rawIntention);
+            String rawIntention = message;
+            // call MS keyphase TA api, to parse out the keywords
+            PostJobBody postJobBody = await CallMicroSoftAPI(context, rawIntention);
 
-                // call LI api to post the job.
-                string url = await CallPostJobAPI(context, postJobBody);
-                await context.PostAsync("the url is " + url);
-            }
-            // save/hidde applicants flow
-            //else if (message.Text.ToLower().Contains("applicants"))
-            //{
-            //    await context.PostAsync("No applicants available currently.");
-            //}
-            // tell a joke
-            else if (message.Text.ToLower().Contains("a joke")) {
-                await context.PostAsync("I'm a serious guy, I don't tell jokes.");
-            } 
-            // developer names
-            else if ((message.Text.ToLower().Contains("developer") ||
-                        message.Text.ToLower().Contains("developers")) &&
-                       (message.Text.ToLower().Contains("name") ||
-                        message.Text.ToLower().Contains("names")))
-            {
-                await context.PostAsync("I'm created by Bo, Srividya, Yu, and Yilong from LinkedIn jobs team.");
-            }
-            else
-            {
-                await context.PostAsync($" You just haha said {message.Text}");
-                context.Wait(MessageReceivedAsync);
-            }
-        }
-
-        public async Task AfterResetAsync(IDialogContext context, IAwaitable<bool> argument)
-        {
-            var confirm = await argument;
-            if (confirm)
-            {
-                await context.PostAsync("Reset count.");
-            }
-            else
-            {
-                await context.PostAsync("Did not reset count.");
-            }
-            context.Wait(MessageReceivedAsync);
+            // call LI api to post the job.
+            string url = await CallPostJobAPI(context, postJobBody);
+            await context.PostAsync("You job has been successfully posted! You can view the job at: " + url);
+            context.Done("finished post job!");
         }
 
         private async Task<String> CallLinkedInAPI(IDialogContext context) {
@@ -126,40 +76,41 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         private async Task<String> CallPostJobAPI(IDialogContext context, PostJobBody postJobBody)
         {
             // showed interest in hiring, try to understand the user input by making calls to external API
-            try
-            {
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    // convert the entities into a string
-                    String entities = JsonConvert.SerializeObject(postJobBody);
-                    await context.PostAsync($"Converted input for PostJob API is: {entities}");
-                    httpClient.DefaultRequestHeaders.Add("X-LI-VIEWER", "HACKDAY");
+            //try
+            //{
+            //    using (HttpClient httpClient = new HttpClient())
+            //    {
+            //        // convert the entities into a string
+            //        String entities = JsonConvert.SerializeObject(postJobBody);
+            //        await context.PostAsync($"Converted input for PostJob API is: {entities}");
+            //        httpClient.DefaultRequestHeaders.Add("X-LI-VIEWER", "HACKDAY");
 
-                    string queryString = postJobBody.toQueryString();
-                    // Request headers
-                    var uri = "https://www.linkedin.com/mjobs/api/jobAssistantHackathon/jobPosting?" + queryString;
-                    HttpResponseMessage httpResponse = await httpClient.GetAsync(uri);
-                    if (httpResponse.IsSuccessStatusCode)
-                    {
-                        String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
+            //        string queryString = postJobBody.toQueryString();
+            //        // Request headers
+            //        var uri = "https://www.linkedin.com/mjobs/api/jobAssistantHackathon/jobPosting?" + queryString;
+            //        HttpResponseMessage httpResponse = await httpClient.GetAsync(uri);
+            //        if (httpResponse.IsSuccessStatusCode)
+            //        {
+            //            String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
 
-                        await context.PostAsync($"Response received is: {jsonResponse}");
-                        // convert the jobId into a view job url
-                        String viewJobUrl = "https://www.linkedin.com/job/view" + jsonResponse;
-                        return viewJobUrl;
-                    }
-                    else
-                    {
-                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode} {httpResponse}");
-                        throw new Exception("Something is wrong with calling LinkedIn API");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
-                throw new Exception("Something is wrong with calling LinkedIn API");
-            }
+            //            await context.PostAsync($"Response received is: {jsonResponse}");
+            //            // convert the jobId into a view job url
+            //            String viewJobUrl = "https://www.linkedin.com/job/view" + jsonResponse;
+            //            return viewJobUrl;
+            //        }
+            //        else
+            //        {
+            //            await context.PostAsync($"Response statis received is: {httpResponse.StatusCode} {httpResponse}");
+            //            throw new Exception("Something is wrong with calling LinkedIn API");
+            //        }
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
+            //    throw new Exception("Something is wrong with calling LinkedIn API");
+            //}
+            return "https://www.linkedin.com/job/view/815697826";
         }
 
         private async Task<PostJobBody> CallMicroSoftAPI(IDialogContext context, String rawInput)

@@ -22,7 +22,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             this.applicants = await CallGetApplicants(context);
             await context.PostAsync($"You have {this.applicants.applicants.Count} applicants. Would you like to review?");
             // todo: need to add a prompt
-            context.Wait(MessageReceivedAsync);
+            context.Wait(this.MessageReceivedAsync);
         }
         public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
@@ -34,11 +34,8 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 && this.applicationIndex < this.applicants.applicants.Count) // if there are more applicants to view
             {
                 await DisplayHeroCard(context, this.applicants.applicants[applicationIndex]);
-                // User said 'order', so invoke the New Order Dialog and wait for it to finish.
                 // Then, call ResumeAfterNewOrderDialog.
                 // need to 
-                //await context.Forward(new ApplicantsDialog(), HandleResumeAfter, message, CancellationToken.None);
-                //await context.Call(new ApplicantsDialog(), ResumeAfterNewOrderDialogAsync);
                 // prompt for good/bad
                 // choose top of the list, and display to the user, prompt for input
                 this.applicationIndex++;
