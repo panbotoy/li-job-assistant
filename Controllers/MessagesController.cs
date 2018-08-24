@@ -22,7 +22,11 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             // check if activity is of type message
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
             {
-                await Conversation.SendAsync(activity, () => new EchoDialog());
+                if (activity.Text.Contains("view applicants")) {
+                    await Conversation.SendAsync(activity, () => new ApplicantsDialog());
+                } else {
+                    await Conversation.SendAsync(activity, () => new EchoDialog());
+                }
             }
             else
             {
