@@ -55,25 +55,12 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 // call LI api to post the job.
                 string url = await CallPostJobAPI(context, postJobBody);
                 await context.PostAsync("the url is " + url);
-            } 
-            // show applicants flow
-            else if (message.Text.ToLower().Contains("applicants")) {
-                // todo make the real call and get the applicants back
-                Applicant applicant = new Applicant();
-                ApplicantBody applicantBody = await CallGetApplicants(context);
-                List<Applicant> applicants = applicantBody.applicants;
-
-            }
-            // view saved applicants flow
-            else if (message.Text.ToLower().Contains("applicants"))
-            {
-                await context.PostAsync("No applicants available currently.");
             }
             // save/hidde applicants flow
-            else if (message.Text.ToLower().Contains("applicants"))
-            {
-                await context.PostAsync("No applicants available currently.");
-            }
+            //else if (message.Text.ToLower().Contains("applicants"))
+            //{
+            //    await context.PostAsync("No applicants available currently.");
+            //}
             // tell a joke
             else if (message.Text.ToLower().Contains("a joke")) {
                 await context.PostAsync("I'm a serious guy, I don't tell jokes.");

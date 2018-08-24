@@ -27,7 +27,9 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var message = await result; // We've got a message!
-            if ((message.Text.ToLower().Contains("yes") 
+            if ((message.Text.ToLower().Contains("yes")
+                 || message.Text.ToLower().Contains("sure")
+                 || message.Text.ToLower().Contains("okay")
                  || message.Text.ToLower().Contains("review")) 
                 && this.applicationIndex < this.applicants.applicants.Count) // if there are more applicants to view
             {
@@ -145,7 +147,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             Applicant applicant1 = new Applicant();
             applicant1.memberName = "Bo Pan";
             applicant1.memberEmail = "bopan@linkedin.com";
-            applicant1.memberCompany = "linkedin";
+            applicant1.memberCompany = "LinkedIn";
             applicant1.memberTitle = "Software Engineer";
             applicant1.memberImageUrl = "https://images.pexels.com/photos/460823/pexels-photo-460823.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350";
             applicant1.jobTitle = "Software Breaker";
@@ -153,7 +155,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             Applicant applicant2 = new Applicant();
             applicant2.memberName = "Yu Wang";
             applicant2.memberEmail = "ywang8@linkedin.com";
-            applicant2.memberCompany = "linkedin";
+            applicant2.memberCompany = "LinkedIn";
             applicant2.memberTitle = "Super Software Engineer";
             applicant2.memberImageUrl = "https://images.pexels.com/photos/39317/chihuahua-dog-puppy-cute-39317.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=350";
             applicant2.jobTitle = "Software Breaker";
