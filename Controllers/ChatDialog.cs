@@ -41,6 +41,11 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                       message.ToLower().Contains("hello")) {
                 await context.PostAsync("Hi, what can I do for you today?");
             }
+            else if (message.ToLower().Contains("bye")
+                    )
+            {
+                await context.PostAsync("Bye! Have a good day!");
+            }
             else {
                 await context.PostAsync("I don't understand. Sorry!");
             }
