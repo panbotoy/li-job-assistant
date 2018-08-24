@@ -35,16 +35,23 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                         message.ToLower().Contains("names")))
             {
                 await context.PostAsync("I'm created by Bo, Srividya, Yu, and Yilong from LinkedIn jobs team.");
-            } 
+            }
             // greetings
             else if (message.ToLower().Contains("hi") ||
-                      message.ToLower().Contains("hello")) {
+                      message.ToLower().Contains("hello"))
+            {
                 await context.PostAsync("Hi, what can I do for you today?");
             }
             else if (message.ToLower().Contains("bye")
                     )
             {
                 await context.PostAsync("Bye! Have a good day!");
+            }
+            else if (message.ToLower().Contains("thank you")
+                     || message.ToLower().Contains("thanks")
+                    )
+            {
+                await context.PostAsync("My pleasure! Anything else I can do for you?");
             }
             else {
                 await context.PostAsync("I don't understand. Sorry!");
