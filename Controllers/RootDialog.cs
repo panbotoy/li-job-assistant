@@ -18,29 +18,37 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
         }
         public virtual async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            var message = await result; // We've got a message!
-            if (string.IsNullOrEmpty(message.Text))
-            {
-                await context.PostAsync($"empty input");
-                context.Wait(MessageReceivedAsync);
-            }
-            if (message.Text.Contains("view applicants")
-               || message.Text.Contains("applicant")
-               )
-            {
-                 context.Call(new ApplicantsDialog(), this.ResumeAfterNewOrderDialog);
-            }
-            else if (message.Text.ToLower().Contains("hire")
-                     || message.Text.ToLower().Contains("post")
-                     || message.Text.ToLower().Contains("role")
-                     || message.Text.ToLower().Contains("position")
-                     || message.Text.ToLower().Contains("job"))
-            {
+            try {
+                var message = await result; // We've got a message!
+                if (string.IsNullOrEmpty(message.Text))
+                {
+                    await context.PostAsync($"empty input");
+                    context.Wait(MessageReceivedAsync);
+                }
+                if (message.Text.Contains("view applicants")
+                   || message.Text.Contains("applicant")
+                   )
+                {
+                    context.Call(new ApplicantsDialog(), this.ResumeAfterNewOrderDialog);
+                }
+                else if (message.Text.ToLower().Contains("hire")
+                         || message.Text.ToLower().Contains("post")
+                         || message.Text.ToLower().Contains("role")
+                         || message.Text.ToLower().Contains("position")
+                         || message.Text.ToLower().Contains("job"))
+                {
 
-                context.Call(new EchoDialog(message.Text), this.ResumeAfterNewOrderDialog);
-            } else {
-                context.Call(new ChatDialog(message.Text), this.ResumeAfterNewOrderDialog);
+                    context.Call(new EchoDialog(message.Text), this.ResumeAfterNewOrderDialog);
+                }
+                else
+                {
+                    context.Call(new ChatDialog(message.Text), this.ResumeAfterNewOrderDialog);
+                }
+            } catch (Exception e) {
+                await context.PostAsync($"Something is to ininitialize the request {e.ToString()}");
+                //throw new Exception("Something is wrong with calling LinkedIn API");
             }
+
         }
 
         private async Task ResumeAfterNewOrderDialog(IDialogContext context, IAwaitable<object> result)
@@ -49,7 +57,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             // (At this point, new order dialog has finished and returned some value to use within the root dialog.)
             var resultFromNewOrder = await result;
 
-            await context.PostAsync($"{resultFromNewOrder}");
+            //await context.PostAsync($"{resultFromNewOrder}");
 
             // Again, wait for the next message from the user.
             context.Wait(this.MessageReceivedAsync);

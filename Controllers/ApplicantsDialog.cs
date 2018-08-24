@@ -30,22 +30,36 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             if ((message.Text.ToLower().Contains("yes")
                  || message.Text.ToLower().Contains("sure")
                  || message.Text.ToLower().Contains("okay")
+                 || message.Text.ToLower().Contains("view more")
                  || message.Text.ToLower().Contains("review")) 
                 && this.applicationIndex < this.applicants.applicants.Count) // if there are more applicants to view
             {
-                await DisplayHeroCard(context, this.applicants.applicants[applicationIndex]);
+                bool finishedViewing = false;
+                string highLightMessage = null;
+                if (this.applicants.applicants.Count - this.applicationIndex - 1 > 0)
+                {
+                    highLightMessage = $"You have {this.applicants.applicants.Count - this.applicationIndex - 1} " +
+                        "more applicants. Would you like to review?";
+                    finishedViewing = false;
+                }
+                else
+                {
+                    highLightMessage = $"No more applicants to view. Come back later!";
+                    finishedViewing = true;
+                }
+                IMessageActivity heroImageResponse = await DisplayHeroCard(context, this.applicants.applicants[applicationIndex], highLightMessage);
                 // Then, call ResumeAfterNewOrderDialog.
                 // need to 
                 // prompt for good/bad
                 // choose top of the list, and display to the user, prompt for input
+                //new PromptDialog()
+                //heroImageResponse.Text = highLightMessage;
+                await context.PostAsync(heroImageResponse);
                 this.applicationIndex++;
-                if (this.applicants.applicants.Count - this.applicationIndex > 0) {
-                    await context.PostAsync($"You have {this.applicants.applicants.Count - this.applicationIndex} " +
-                                        "more applicants. Would you like to review?");
+                if (!finishedViewing) {
                     context.Wait(this.MessageReceivedAsync);
                 } else {
-                    await context.PostAsync($"No more applicants to view. Come back later!");
-                    context.Done("Finished");
+                    context.Done("");
                 }
             } else {
                 // if user says no, then terminate the task
@@ -55,42 +69,32 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
             // User typed something else; for simplicity, ignore this input and wait for the next message.
         }
 
-        //private async Task ResumeAfterNewOrderDialogAsync(IDialogContext context, IAwaitable<string> result)
+        //public async Task DisplayHeroCards(IDialogContext context, ApplicantBody applicantBody)
         //{
-        //    // Store the value that NewOrderDialog returned. 
-        //    // (At this point, new order dialog has finished and returned some value to use within the root dialog.)
-        //    var resultFromNewOrder = await result;
-
-        //    await context.PostAsync($"New order dialog just told me this: {resultFromNewOrder}");
-
-        //    // Again, wait for the next message from the user.
-        //    context.Done("Finished_ApplicantsLog");
+        //    List<Attachment> attachments = new List<Attachment>();
+        //    for (int i = 0; i < applicantBody.applicants.Count; i++) {
+        //        Attachment attachment = GetProfileHeroCard(applicantBody.applicants[i]);
+        //        attachments.Add(attachment);
+        //    }
+        //    var replyMessage = context.MakeMessage();
+        //    replyMessage.Attachments = attachments;
+        //    await context.PostAsync(replyMessage);
         //}
 
-        public async Task DisplayHeroCards(IDialogContext context, ApplicantBody applicantBody)
+        public async Task<IMessageActivity> DisplayHeroCard(IDialogContext context, Applicant applicant, string text)
         {
             List<Attachment> attachments = new List<Attachment>();
-            for (int i = 0; i < applicantBody.applicants.Count; i++) {
-                Attachment attachment = GetProfileHeroCard(applicantBody.applicants[i]);
-                attachments.Add(attachment);
-            }
-            var replyMessage = context.MakeMessage();
-            replyMessage.Attachments = attachments;
-            await context.PostAsync(replyMessage);
-        }
-
-        public async Task DisplayHeroCard(IDialogContext context, Applicant applicant)
-        {
-            List<Attachment> attachments = new List<Attachment>();
-            Attachment attachment = GetProfileHeroCard(applicant);
+            Attachment attachment = GetProfileHeroCard(applicant, text);
             attachments.Add(attachment);
             var replyMessage = context.MakeMessage();
             replyMessage.Attachments = attachments;
-            await context.PostAsync(replyMessage);
+            //await context.PostAsync(replyMessage);
+            return replyMessage;
         }
 
-        private static Attachment GetProfileHeroCard(Applicant applicant)
+        private static Attachment GetProfileHeroCard(Applicant applicant, string text)
         {
+            string[] sentenses = text.Split('.');
             var heroCard = new HeroCard
             {
                 // title of the card  
@@ -104,8 +108,10 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                 // list of  Large Image  
                 Images = new List<CardImage> { new CardImage(applicant.memberImageUrl) },
                 // list of buttons   
-                //Buttons = new List<CardAction> { new CardAction(ActionTypes.OpenUrl, "Learn More", value: "http://www.devenvexe.com") }
-                Buttons = new List<CardAction> {}
+                //change this to a string
+                Buttons = new List<CardAction> { new CardAction(ActionTypes.MessageBack, sentenses[0], value: "http://www.devenvexe.com"), 
+                    new CardAction(ActionTypes.MessageBack, sentenses[1], value: "http://www.devenvexe.com") }
+                //Buttons = new List<CardAction> {}
             };
 
             return heroCard.ToAttachment();

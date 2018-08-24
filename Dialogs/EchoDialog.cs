@@ -55,20 +55,20 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     if (httpResponse.IsSuccessStatusCode)
                     {
                         String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
-                        await context.PostAsync($"Response received is: {jsonResponse}");
+                        //await context.PostAsync($"Response received is: {jsonResponse}");
                         return jsonResponse;
                     }
                     else
                     {
                         await context.PostAsync($"Response statis received is: {httpResponse.StatusCode}");
-                        await context.PostAsync($"Response received is: {httpResponse.ReasonPhrase}");
+                        //await context.PostAsync($"Response received is: {httpResponse.ReasonPhrase}");
                         throw new Exception("Something is wrong with calling LinkedIn API");
                     }
                 }
             }
             catch (Exception e)
             {
-                await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
+                //await context.PostAsync($"Something    is wrong with processing the request {e.ToString()}");
                 throw new Exception("Something is wrong with calling LinkedIn API");
             }
         }
@@ -125,7 +125,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     List<String> preprocessedInput = new List<String>{rawInput};
                     DocumentInputList documentInputs = new DocumentInputList(preprocessedInput);
                     String entities = JsonConvert.SerializeObject(documentInputs);
-                    await context.PostAsync($"Preprocessed input is {preprocessedInput}, Converted input for MS API is: {entities}");
+                    //await context.PostAsync($"Preprocessed input is {preprocessedInput}, Converted input for MS API is: {entities}");
                     httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "bee7e2d91eb342dbae5860adf08082ec");
 
                     var queryString = HttpUtility.ParseQueryString(string.Empty);
@@ -143,7 +143,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                         String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
                         TextAnalysisKeyPhrases keyPhrases = JsonConvert.DeserializeObject<TextAnalysisKeyPhrases>(jsonResponse);
 
-                        await context.PostAsync($"Response received is: {jsonResponse}");
+                        //await context.PostAsync($"Response received is: {jsonResponse}");
                         await context.PostAsync($"The generated keywards is: {JoinStrings(keyPhrases.getKeyWordsInList())}");
 
                         PostJobBody postJobBody = new PostJobBody();
@@ -152,47 +152,15 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     }
                     else
                     {
-                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode} {httpResponse}");
+                        //await context.PostAsync($"Response statis received is: {httpResponse.StatusCode} {httpResponse}");
                         throw new Exception("Something is wrong with calling LinkedIn API");
                     }
                 }
             }
             catch (Exception e)
             {
-                await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
+                //await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
                 throw new Exception("Something is wrong with calling MicroSoft Text Analytics API");
-            }
-        }
-
-        private async Task<ApplicantBody> CallGetApplicants(IDialogContext context)
-        {
-            // showed interest in hiring, try to understand the user input by making calls to external API
-            try
-            {
-                using (HttpClient httpClient = new HttpClient())
-                {
-                    String target = "https://www.linkedin.com/mjobs/api/jobAssistantHackathon/jobPosting";
-                    HttpResponseMessage httpResponse = await httpClient.GetAsync(target);
-                    if (httpResponse.IsSuccessStatusCode)
-                    {
-                        String jsonResponse = await httpResponse.Content.ReadAsStringAsync();
-                        // todo convert getjsonResponse to proper list of applicants
-                        await context.PostAsync($"Response received is: {jsonResponse}");
-                        ApplicantBody applicantBody = JsonConvert.DeserializeObject<ApplicantBody>(jsonResponse);
-                        return applicantBody;
-                    }
-                    else
-                    {
-                        await context.PostAsync($"Response statis received is: {httpResponse.StatusCode}");
-                        await context.PostAsync($"Response received is: {httpResponse.ReasonPhrase}");
-                        throw new Exception("Something is wrong with calling LinkedIn API");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                await context.PostAsync($"Something is wrong with processing the request {e.ToString()}");
-                throw new Exception("Something is wrong with calling LinkedIn API");
             }
         }
 
