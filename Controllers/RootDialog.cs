@@ -46,7 +46,7 @@ namespace Microsoft.Bot.Sample.SimpleEchoBot
                     context.Call(new ChatDialog(message.Text), this.ResumeAfterNewOrderDialog);
                 }
             } catch (Exception e) {
-                await context.PostAsync($"Something is to ininitialize the request {e.ToString()}");
+                await context.PostAsync($"How are you today?");
                 //throw new Exception("Something is wrong with calling LinkedIn API");
             }
 
